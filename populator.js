@@ -11,7 +11,7 @@ var parser = require('xml2json');
 
 async function populate() {
     const uniqueMeals = new Set();
-  //  const document = await firestore.collection('offerings');
+    const document = await firestore.collection('offerings');
     const mealDoc = await firestore.collection("meals");
 
     for (let i = 4; i <= 100; i++) {
@@ -42,13 +42,17 @@ async function populate() {
                     day,
                     meal
                 };
+
                 console.log("Offering" + offering.meal);
-              //  await document.add(offering);
+                await document.add(offering);
 
                 const meals = {
                     meal
                 }
-                await mealDoc.add(meals);
+                if (typeof meal == "string" ) {
+                    await mealDoc.add(meals);
+                }
+
 
 
             } catch(e) {
