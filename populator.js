@@ -11,7 +11,8 @@ var parser = require('xml2json');
 
 async function populate() {
     const uniqueMeals = new Set();
-    const document = await firestore.collection('offerings');
+  //  const document = await firestore.collection('offerings');
+    const mealDoc = await firestore.collection("meals");
 
     for (let i = 4; i <= 100; i++) {
         const url = `https://microsoft.sharepoint.com/sites/refweb/_api/web/lists/GetByTitle('DiningMenus')/items?$select=CafeName,StationName,DayOfWeekID,WeekDate,MenuItem,MenuDescription,MenuPrice&$filter=CafeName%20eq%20%27Cafe%20${i}%27%20and%20WeekDate%20ge%20datetime%272018-07-23T07:00:00.000Z%27%20and%20WeekDate%20le%20datetime%272018-07-24T06:59:59.059Z%27&$orderby=DayOfWeekID,StationName&$top=700`;
@@ -26,6 +27,7 @@ async function populate() {
         } catch (e) {
             continue;
         }
+
         const xml = await resp.text();
         const data = JSON.parse(parser.toJson(xml));
         if (!data.feed || !data.feed.entry) { continue; }
@@ -40,7 +42,15 @@ async function populate() {
                     day,
                     meal
                 };
-                await document.add(offering);
+                console.log("Offering" + offering.meal);
+              //  await document.add(offering);
+
+                const meals = {
+                    meal
+                }
+                await mealDoc.add(meals);
+
+
             } catch(e) {
                 console.log('FAIL', e);
             }
